@@ -1,0 +1,111 @@
+﻿@page "/fetchdata"
+@using System.Text.Json
+@using System.Text.Json.Serialization
+
+@inject ITodoService todoService
+
+<PageTitle>Todo List</PageTitle>
+
+<h1>Todo List</h1>
+
+<p>This component demonstrates fetching data from a API.</p>
+
+<EditForm Model="@todoItem" OnSubmit="AddItem">
+    <div>
+        <label>Название: </label>
+        <InputText @bind-Value="todoItem.Name" placeholder = "Название"/>
+    </div>
+    <br/>
+    <div>
+
+        <label>Сделано: </label>
+        <InputCheckbox @bind-Value="todoItem.IsComplete"/>
+    </div>
+    <br/>
+
+    <div>
+        <input type = "submit" value = "Добавить"/>
+    </div>
+</EditForm>
+
+
+
+@if (todoItems == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>IsComplete</th>
+                <th>Delete</th>
+                <th>Edit</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var todoitem in todoItems)
+            {
+                <tr>
+                    <td>@todoitem.Id</td>
+                    <td>@todoitem.Name</td>
+                    <td>@todoitem.IsComplete</td>
+                    <td><input type="button" @onclick="(()=> DeleteItem(todoitem.Id))" value="Delete"/></td>
+                    <td><input type="button" @onclick="(()=> EditItem(todoitem.Id,todoitem))" value="Edit"/></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+
+    private IEnumerable<TodoItem> todoItems = null!;
+
+    private TodoItem todoItem = new TodoItem();
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        todoItems = await todoService.GetTodoList();
+
+        todoItem = new TodoItem();
+    }
+
+    protected async Task LoadTodoList()
+    {
+        todoItems = await todoService.GetTodoList();
+        StateHasChanged();
+    }
+
+    protected async Task AddItem()
+    {
+        if (todoItem.Id == 0)
+        {
+            await todoService.AddTodoItem(todoItem);
+        }
+        else
+        {
+            await todoService.EditTodoItem(todoItem.Id, todoItem);
+        }
+        await LoadTodoList();
+        todoItem = new TodoItem();
+    }
+
+    protected async Task DeleteItem(long id)
+    {
+        await todoService.DeleteTodoItem(id);
+        await LoadTodoList();
+    }
+
+    protected async Task EditItem(long id, TodoItem todoitem)
+    {
+        todoItem.Id = todoitem.Id;
+        todoItem.IsComplete = todoitem.IsComplete;
+        todoItem.Name = todoitem.Name;
+    }
+}

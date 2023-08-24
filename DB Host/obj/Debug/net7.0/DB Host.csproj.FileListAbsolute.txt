@@ -1,0 +1,5 @@
+E:\MyProjects\Full Stack Practice\DB Host\obj\Debug\net7.0\DB Host.csproj.AssemblyReference.cache
+E:\MyProjects\Full Stack Practice\DB Host\obj\Debug\net7.0\DB Host.GeneratedMSBuildEditorConfig.editorconfig
+E:\MyProjects\Full Stack Practice\DB Host\obj\Debug\net7.0\DB Host.AssemblyInfoInputs.cache
+E:\MyProjects\Full Stack Practice\DB Host\obj\Debug\net7.0\DB Host.AssemblyInfo.cs
+E:\MyProjects\Full Stack Practice\DB Host\obj\Debug\net7.0\DB Host.csproj.CoreCompileInputs.cache
