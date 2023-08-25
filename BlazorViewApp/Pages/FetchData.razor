@@ -1,4 +1,4 @@
-﻿@page "/fetchdata"
+﻿@page "/products"
 @using System.Text.Json
 @using System.Text.Json.Serialization
 
@@ -12,34 +12,102 @@
 
 <p>This component demonstrates fetching data from a API.</p>
 
+<div class="card">
+    <button class="card-header btn rounded col-12" style="text-align:left" @onclick="@(()=>ChangeVisibility("CategoryEditForm"))">Добавить категорию</button>
+    <div class="card-body collapse" id="CategoryEditForm-collapse">
+        <EditForm Model="@_category" OnValidSubmit="AddCategory" class="card-body">
+        <DataAnnotationsValidator />
+        <table>
+            <tr>
+                <td><label><b>Название категории</b></label></td>
+                <td><InputText @bind-Value="_category.Name" placeholder="Название" class="rounded"></InputText></td>
+                <ValidationMessage For="@(()=>_category.Name)"></ValidationMessage>
+            </tr>
+            <tr>
+                <td><label><b>Описание категории</b></label></td>
+                <td><InputText @bind-Value="_category.Discription" placeholder="Описание" class="rounded"></InputText></td>
+                <ValidationMessage For="@(()=>_category.Discription)"></ValidationMessage>
+            </tr>
+
+        </table>
+        <br />
+        <input class="rounded" type="submit" value="Добавить" />
+    </EditForm>
+    </div>
+</div>
+<br />
+<div class="card">
+    <button class="card-header btn rounded col-12" style="text-align:left" @onclick="@(()=>ChangeVisibility("ProductEditForm"))">Добавить продукт</button>
+    <div class="card-body collapse" id="ProductEditForm-collapse">
+        <EditForm Model="@_product" OnValidSubmit="AddCategory">
+            <DataAnnotationsValidator />
+            <table>
+                <tr>
+                    <td><label><b>Название продукта</b></label></td>
+                    <td><InputText @bind-Value="_product.Name" placeholder="Название" class="rounded"></InputText></td>
+                    <ValidationMessage For="@(()=>_product.Name)"></ValidationMessage>
+                </tr>
+                <tr>
+                    <td><label><b>Категория продукта</b></label></td>
+                    <select class="form-select" multiple>
+                        @foreach(Category category in _categoriesList)
+                        {
+                            <option value="@category">@category.Name</option>
+                        }
+                    </select>
+                    <ValidationMessage For="@(()=>_category.Discription)"></ValidationMessage>
+                </tr>
+
+            </table>
+            <br />
+            <input class="rounded" type="submit" value="Добавить" />
+        </EditForm>
+    </div>
+</div>
+
+
 @if (_categoriesList == null)
 {
-    <p>Loading...</p>
+
+    <ul class="list-group list-unstyled placeholder-glow">
+        @for(int i = 0; i < 5; i++)
+        {
+        <li class="list-group-item">
+            <button class="rounded col-12" style="text-align:left">
+                <span class="placeholder col-1"></span>
+            </button>
+        </li>
+        }
+    </ul>
 }
 else
 {
     <ul class="list-group list-unstyled">
         @foreach(Category category in _categoriesList)
         {
-            <div class="list-group-item">
-                <li class="mb-1">
-                    <button class="btn rounded collapsed" data-bs-toggle="collapse"
-                            data-bs-target="#@(category.Name+"-collapse")"
-                            @onclick="(()=>OnCategoryLabelClick(category.Name))">
-                        @category.Name
-                    </button>
-                    <div class="collapse" id="@(category.Name+"-collapse")">
-                        <ul class="list-group">
-                            <li class="list-group-item">1</li>
-                            <li class="list-group-item">2</li>
-                            <li class="list-group-item">3</li>
-                        </ul>
+            <li class="list-group-item list-group-ite mb-1">
+                <button class="btn rounded collapsed col-12" style="text-align:left" 
+                        @onclick="(()=>ChangeVisibility(category.Name))">
+                    @category.Name
+                </button>
+
+                <div class="collapse" style="margin-top:1em" id="@(category.Name+"-collapse")">
+                    <ul class="list-group">
+                        @if (category.Products == null || category.Products.Count==0)
+                        {
+                            <li class="list-group-item">Продуктов не найдено</li>
+                        }
+                        else
+                        {
+                            @foreach(Product product in category.Products)
+                            {
+                                <li class="list-group-item">@product.Name</li>                            
+                            }
+                        }
+                    </ul>
                     </div>
-                </li>
-            </div>
+            </li>
         }
-
-
     </ul>
 }
 
@@ -48,23 +116,45 @@ else
     private List<Category> _categoriesList = null!;
 
     private Category _category = new Category();
-
+    private Product _product = new Product();
 
     protected override async Task OnInitializedAsync()
     {
         _categoriesList = await productService.GetCategories();
+        foreach (Category category in _categoriesList)
+        {
+            category.Products = await productService.GetProductsInCategoryByCategoryId(category.Id);
+        }
     }
 
     protected async Task LoadCategoryList()
     {
-        _categoriesList = await productService.GetCategories();
+        _categoriesList = await productService.GetCategories(); 
+        foreach (Category category in _categoriesList)
+        {
+            category.Products = await productService.GetProductsInCategoryByCategoryId(category.Id);
+        }
         StateHasChanged();
     }
 
-    protected async void OnCategoryLabelClick(string categoryName)
+    protected async void ChangeVisibility(string elementId)
     {
-        await JSRuntime.InvokeVoidAsync("ChangeVisibility", categoryName + "-collapse");
+        await JSRuntime.InvokeVoidAsync("ChangeVisibility", elementId+"-collapse");
         StateHasChanged();
     }
 
+    protected async void AddCategory()
+    {
+        await productService.AddCategory(_category);
+        await LoadCategoryList();
+        _category = new Category();
+
+    }
+
+    protected async void AddProduct()
+    {
+        await productService.AddProduct(_product);
+        await LoadCategoryList();
+        _product = new Product();
+    }
 }

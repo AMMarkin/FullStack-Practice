@@ -50,14 +50,16 @@ namespace BlazorViewApp.Data.Services.ProductServices
 		public async Task<List<Category>> GetCategories() => _categories;
 
 
-		public Task AddCategory(Category category)
+		public async Task AddCategory(Category category)
 		{
-			throw new NotImplementedException();
+			category.Id = _categories.Max(c => c.Id) + 1;
+			_categories.Add(category);
 		}
 
-		public Task AddProduct(Product product)
+		public async Task AddProduct(Product product)
 		{
-			throw new NotImplementedException();
+			product.Id = _products.Max(p => p.Id) + 1;
+			_products.Add(product);
 		}
 
 		public Task DeleteCategory(int id)
@@ -69,9 +71,6 @@ namespace BlazorViewApp.Data.Services.ProductServices
 		{
 			throw new NotImplementedException();
 		}
-
-		
-
 		public Task<List<Category>> GetCategoriesOfProductById(int productId)
 		{
 			throw new NotImplementedException();
@@ -92,9 +91,13 @@ namespace BlazorViewApp.Data.Services.ProductServices
 			throw new NotImplementedException();
 		}
 
-		public Task<List<Product>> GetProductsInCategoryByCategoryId(int categoryId)
+		public async Task<List<Product>> GetProductsInCategoryByCategoryId(int categoryId)
 		{
-			throw new NotImplementedException();
+			var rec = _records.Where(r => r.CategoryId == categoryId);
+
+			var res = rec.Select(r => _products.Find(p => p.Id == r.ProductId));
+
+			return res.ToList();
 		}
 
 		public Task UpdateCategory(Category category)

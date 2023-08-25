@@ -14,5 +14,7 @@ namespace BlazorViewApp.Data.Models.Products
 
         [JsonPropertyName("description")]
         public string? Description { get; set; }
+
+        public List<Category> Categories { get; set; }
     }
 }

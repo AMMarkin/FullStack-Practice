@@ -1,5 +1,4 @@
-﻿
-function ChangeVisibility(id) {
+﻿function ChangeVisibility(id) {
     var element = document.getElementById(id);
 
     if (element.classList.contains("show")) {
