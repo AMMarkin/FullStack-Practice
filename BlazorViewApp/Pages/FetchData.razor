@@ -11,16 +11,25 @@
 <p>This component demonstrates fetching data from a API.</p>
 
 <EditForm Model="@todoItem" OnSubmit="AddItem">
-    <div>
-        <label>Название: </label>
-        <InputText @bind-Value="todoItem.Name" placeholder = "Название"/>
-    </div>
-    <br/>
-    <div>
+    <table>
+        <tr>
+            <td>
+                <label><b>Название: </b></label>
+            </td>
+            <td>
+                <InputText @bind-Value="todoItem.Name" placeholder = "Название"/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label><b>Сделано: </b></label>
+            </td>
+            <td>
+                <InputCheckbox @bind-Value="todoItem.IsComplete"/>
+            </td>
+        </tr>
+    </table>
 
-        <label>Сделано: </label>
-        <InputCheckbox @bind-Value="todoItem.IsComplete"/>
-    </div>
     <br/>
 
     <div>
@@ -32,11 +41,46 @@
 
 @if (todoItems == null)
 {
-    <p><em>Loading...</em></p>
+    <div class="placeholder-glow">
+
+    <table class="table table-striped tabel-condensed">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>IsComplete</th>
+                <th>Delete</th>
+                <th>Edit</th>
+            </tr>
+        </thead>
+        <tbody>
+                @for(int i = 0; i < 5; i++)
+                {
+                <tr>
+                    <td>
+                        <span class="placeholder col-2"></span>
+                    </td>
+                    <td>
+                        <span class="placeholder col-4"></span>
+                    </td>
+                    <td>
+                        <span class="placeholder col-2"></span>
+                    </td>
+                    <td>
+                        <span class="placeholder col-2"></span>
+                    </td>
+                    <td>
+                        <span class="placeholder col-2"></span>
+                    </td>
+                </tr>
+                }
+        </tbody>
+    </table>
+    </div>
 }
 else
 {
-    <table class="table">
+    <table class="table table-striped tabel-condensed">
         <thead>
             <tr>
                 <th>Id</th>
@@ -71,9 +115,9 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        todoItems = await todoService.GetTodoList();
+        //todoItems = await todoService.GetTodoList();
 
-        todoItem = new TodoItem();
+        //todoItem = new TodoItem();
     }
 
     protected async Task LoadTodoList()
