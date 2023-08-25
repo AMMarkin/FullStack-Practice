@@ -1,4 +1,6 @@
-﻿namespace BlazorViewApp.Data
+﻿using BlazorViewApp.Data.Models.Todos;
+
+namespace BlazorViewApp.Data.Services.TodoServices
 {
     public interface ITodoService
     {

@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "TMr7JV5RM7tnrWBsrYETkIPvY5fTZrZgwIveug7VOAs=",
+  "Hash": "CvGhpWdeA5xFohL3okvfqhu0kSREQV88L1LLh53yd+M=",
   "Source": "BlazorViewApp",
   "BasePath": "_content/BlazorViewApp",
   "Mode": "Default",
@@ -282,6 +282,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\favicon.png"
+    },
+    {
+      "Identity": "E:\\MyProjects\\Full Stack Practice\\BlazorViewApp\\wwwroot\\js\\site.js",
+      "SourceId": "BlazorViewApp",
+      "SourceType": "Discovered",
+      "ContentRoot": "E:\\MyProjects\\Full Stack Practice\\BlazorViewApp\\wwwroot\\",
+      "BasePath": "_content/BlazorViewApp",
+      "RelativePath": "js/site.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\site.js"
     }
   ]
 }

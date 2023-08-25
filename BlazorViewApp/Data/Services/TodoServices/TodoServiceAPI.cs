@@ -1,7 +1,8 @@
-﻿using NuGet.Protocol;
+﻿using BlazorViewApp.Data.Models.Todos;
+using NuGet.Protocol;
 using System.Text.Json;
 
-namespace BlazorViewApp.Data
+namespace BlazorViewApp.Data.Services.TodoServices
 {
     public class TodoServiceAPI : ITodoService
     {
@@ -15,17 +16,17 @@ namespace BlazorViewApp.Data
 
         public async Task AddTodoItem(TodoItem item)
         {
-            await _httpClient.PostAsync(APIURL, JsonContent.Create<TodoItem>(item));
+            await _httpClient.PostAsync(APIURL, JsonContent.Create(item));
         }
 
         public async Task DeleteTodoItem(long id)
         {
-            await _httpClient.DeleteAsync(APIURL+$"{id}");
+            await _httpClient.DeleteAsync(APIURL + $"{id}");
         }
 
         public async Task EditTodoItem(long id, TodoItem item)
         {
-            await _httpClient.PutAsJsonAsync<TodoItem>(APIURL + $"{id}", item);
+            await _httpClient.PutAsJsonAsync(APIURL + $"{id}", item);
         }
 
         public async Task<IEnumerable<TodoItem>> GetTodoList()

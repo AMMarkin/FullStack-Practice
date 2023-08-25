@@ -2,154 +2,69 @@
 @using System.Text.Json
 @using System.Text.Json.Serialization
 
-@inject ITodoService todoService
 
-<PageTitle>Todo List</PageTitle>
+@inject IProductService productService
+@inject IJSRuntime JSRuntime
 
-<h1>Todo List</h1>
+<PageTitle>Products List</PageTitle>
+
+<h1>Products List</h1>
 
 <p>This component demonstrates fetching data from a API.</p>
 
-<EditForm Model="@todoItem" OnSubmit="AddItem">
-    <table>
-        <tr>
-            <td>
-                <label><b>Название: </b></label>
-            </td>
-            <td>
-                <InputText @bind-Value="todoItem.Name" placeholder = "Название"/>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <label><b>Сделано: </b></label>
-            </td>
-            <td>
-                <InputCheckbox @bind-Value="todoItem.IsComplete"/>
-            </td>
-        </tr>
-    </table>
-
-    <br/>
-
-    <div>
-        <input type = "submit" value = "Добавить"/>
-    </div>
-</EditForm>
-
-
-
-@if (todoItems == null)
+@if (_categoriesList == null)
 {
-    <div class="placeholder-glow">
-
-    <table class="table table-striped tabel-condensed">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>IsComplete</th>
-                <th>Delete</th>
-                <th>Edit</th>
-            </tr>
-        </thead>
-        <tbody>
-                @for(int i = 0; i < 5; i++)
-                {
-                <tr>
-                    <td>
-                        <span class="placeholder col-2"></span>
-                    </td>
-                    <td>
-                        <span class="placeholder col-4"></span>
-                    </td>
-                    <td>
-                        <span class="placeholder col-2"></span>
-                    </td>
-                    <td>
-                        <span class="placeholder col-2"></span>
-                    </td>
-                    <td>
-                        <span class="placeholder col-2"></span>
-                    </td>
-                </tr>
-                }
-        </tbody>
-    </table>
-    </div>
+    <p>Loading...</p>
 }
 else
 {
-    <table class="table table-striped tabel-condensed">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>IsComplete</th>
-                <th>Delete</th>
-                <th>Edit</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var todoitem in todoItems)
-            {
-                <tr>
-                    <td>@todoitem.Id</td>
-                    <td>@todoitem.Name</td>
-                    <td>@todoitem.IsComplete</td>
-                    <td><input type="button" @onclick="(()=> DeleteItem(todoitem.Id))" value="Delete"/></td>
-                    <td><input type="button" @onclick="(()=> EditItem(todoitem.Id,todoitem))" value="Edit"/></td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <ul class="list-group list-unstyled">
+        @foreach(Category category in _categoriesList)
+        {
+            <div class="list-group-item">
+                <li class="mb-1">
+                    <button class="btn rounded collapsed" data-bs-toggle="collapse"
+                            data-bs-target="#@(category.Name+"-collapse")"
+                            @onclick="(()=>OnCategoryLabelClick(category.Name))">
+                        @category.Name
+                    </button>
+                    <div class="collapse" id="@(category.Name+"-collapse")">
+                        <ul class="list-group">
+                            <li class="list-group-item">1</li>
+                            <li class="list-group-item">2</li>
+                            <li class="list-group-item">3</li>
+                        </ul>
+                    </div>
+                </li>
+            </div>
+        }
+
+
+    </ul>
 }
 
 @code {
 
-    private IEnumerable<TodoItem> todoItems = null!;
+    private List<Category> _categoriesList = null!;
 
-    private TodoItem todoItem = new TodoItem();
-
+    private Category _category = new Category();
 
 
     protected override async Task OnInitializedAsync()
     {
-        //todoItems = await todoService.GetTodoList();
-
-        //todoItem = new TodoItem();
+        _categoriesList = await productService.GetCategories();
     }
 
-    protected async Task LoadTodoList()
+    protected async Task LoadCategoryList()
     {
-        todoItems = await todoService.GetTodoList();
+        _categoriesList = await productService.GetCategories();
         StateHasChanged();
     }
 
-    protected async Task AddItem()
+    protected async void OnCategoryLabelClick(string categoryName)
     {
-        if (todoItem.Id == 0)
-        {
-            await todoService.AddTodoItem(todoItem);
-        }
-        else
-        {
-            await todoService.EditTodoItem(todoItem.Id, todoItem);
-        }
-        await LoadTodoList();
-        todoItem = new TodoItem();
+        await JSRuntime.InvokeVoidAsync("ChangeVisibility", categoryName + "-collapse");
+        StateHasChanged();
     }
 
-    protected async Task DeleteItem(long id)
-    {
-        await todoService.DeleteTodoItem(id);
-        await LoadTodoList();
-    }
-
-    protected async Task EditItem(long id, TodoItem todoitem)
-    {
-        todoItem.Id = todoitem.Id;
-        todoItem.IsComplete = todoitem.IsComplete;
-        todoItem.Name = todoitem.Name;
-    }
 }

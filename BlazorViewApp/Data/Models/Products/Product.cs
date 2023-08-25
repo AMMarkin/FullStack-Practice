@@ -1,19 +1,18 @@
 ﻿using Newtonsoft.Json;
 using System.Text.Json.Serialization;
 
-namespace BlazorViewApp.Data
+namespace BlazorViewApp.Data.Models.Products
 {
     [JsonObject]
-    public class TodoItem
+    public class Product
     {
         [JsonPropertyName("id")]
-        public long Id { get; set; }
+        public int Id { get; set; }
 
         [JsonPropertyName("name")]
         public string? Name { get; set; }
 
-        [JsonPropertyName("isComplete")]
-        public bool IsComplete { get; set; } = false;
-
+        [JsonPropertyName("description")]
+        public string? Description { get; set; }
     }
 }

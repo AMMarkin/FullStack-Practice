@@ -1,10 +1,10 @@
-using BlazorViewApp.Data;
+using BlazorViewApp.Data.Services.ProductServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<ITodoService,TodoServiceAPI>();
+builder.Services.AddSingleton<IProductService, ProductServiceFromMemory>();
 builder.Services.AddHttpClient();
 
 
