@@ -6,7 +6,7 @@ namespace BlazorViewApp.Data.Models.Products
     [JsonObject]
     public class Product
     {
-        [JsonPropertyName("id")]
+        [JsonPropertyName("Id")]
         public int Id { get; set; }
 
         [JsonPropertyName("name")]
@@ -15,6 +15,6 @@ namespace BlazorViewApp.Data.Models.Products
         [JsonPropertyName("description")]
         public string? Description { get; set; }
 
-        public List<Category> Categories { get; set; }
+        public List<Category> Categories { get; set; } = new List<Category>();
     }
 }

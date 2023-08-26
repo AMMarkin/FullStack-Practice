@@ -5,11 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddControllers();
-builder.Services.AddDbContext<TodoContext>(opt =>
-    {
-        opt.UseSqlServer("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"E:\\MyProjects\\Full Stack Practice\\DB Host\\MyDB.mdf\";Integrated Security=True");
-        
-    });
+builder.Services.AddDbContext<ProductsContext>(opt => opt.UseInMemoryDatabase("ProductCatalogDB"));
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen();

@@ -12,10 +12,8 @@
 
 <p>This component demonstrates fetching data from a API.</p>
 
-<div class="card">
-    <button class="card-header btn rounded col-12" style="text-align:left" @onclick="@(()=>ChangeVisibility("CategoryEditForm"))">Добавить категорию</button>
-    <div class="card-body collapse" id="CategoryEditForm-collapse">
-        <EditForm Model="@_category" OnValidSubmit="AddCategory" class="card-body">
+<CollapseComponent Title="Добавлить категорию" ElementId="CategoryEditForm" DivClass="card" HeaderClass="card-header">
+    <EditForm Model="@_category" OnValidSubmit="AddCategory" class="card-body">
         <DataAnnotationsValidator />
         <table>
             <tr>
@@ -25,46 +23,50 @@
             </tr>
             <tr>
                 <td><label><b>Описание категории</b></label></td>
-                <td><InputText @bind-Value="_category.Discription" placeholder="Описание" class="rounded"></InputText></td>
-                <ValidationMessage For="@(()=>_category.Discription)"></ValidationMessage>
+                <td><InputText @bind-Value="_category.Description" placeholder="Описание" class="rounded"></InputText></td>
+                <ValidationMessage For="@(()=>_category.Description)"></ValidationMessage>
+            </tr>
+        </table>
+        <br />
+        <input class="rounded" type="submit" value="Добавить" />
+    </EditForm>
+</CollapseComponent>
+
+<br />
+
+<CollapseComponent Title="Добавить продукт" ElementId="ProductEditForm" DivClass="card" HeaderClass="card-header">
+    <EditForm Model="@_product" OnValidSubmit="AddProduct" class="card-body">
+        <DataAnnotationsValidator />
+        <table>
+            <tr>
+                <td><label><b>Название продукта</b></label></td>
+                <td><InputText @bind-Value="_product.Name" placeholder="Название" class="rounded"></InputText></td>
+                <ValidationMessage For="@(()=>_product.Name)"></ValidationMessage>
+            </tr>
+            <tr>
+                <td><label><b>Категория продукта</b></label></td>
+                <select class="form-select" multiple @bind="@_selectedCategories">
+                    @if (_categoriesList == null)
+                    {
+                        <option>Другое</option>
+                    }else{
+
+                        foreach(Category category in _categoriesList)
+                        {
+                            <option value="@category.Id">@category.Name</option>
+                        }
+                    }
+                </select>
+                <ValidationMessage For="@(()=>_category.Description)"></ValidationMessage>
             </tr>
 
         </table>
         <br />
         <input class="rounded" type="submit" value="Добавить" />
     </EditForm>
-    </div>
-</div>
+</CollapseComponent>
+    
 <br />
-<div class="card">
-    <button class="card-header btn rounded col-12" style="text-align:left" @onclick="@(()=>ChangeVisibility("ProductEditForm"))">Добавить продукт</button>
-    <div class="card-body collapse" id="ProductEditForm-collapse">
-        <EditForm Model="@_product" OnValidSubmit="AddCategory">
-            <DataAnnotationsValidator />
-            <table>
-                <tr>
-                    <td><label><b>Название продукта</b></label></td>
-                    <td><InputText @bind-Value="_product.Name" placeholder="Название" class="rounded"></InputText></td>
-                    <ValidationMessage For="@(()=>_product.Name)"></ValidationMessage>
-                </tr>
-                <tr>
-                    <td><label><b>Категория продукта</b></label></td>
-                    <select class="form-select" multiple>
-                        @foreach(Category category in _categoriesList)
-                        {
-                            <option value="@category">@category.Name</option>
-                        }
-                    </select>
-                    <ValidationMessage For="@(()=>_category.Discription)"></ValidationMessage>
-                </tr>
-
-            </table>
-            <br />
-            <input class="rounded" type="submit" value="Добавить" />
-        </EditForm>
-    </div>
-</div>
-
 
 @if (_categoriesList == null)
 {
@@ -86,12 +88,7 @@ else
         @foreach(Category category in _categoriesList)
         {
             <li class="list-group-item list-group-ite mb-1">
-                <button class="btn rounded collapsed col-12" style="text-align:left" 
-                        @onclick="(()=>ChangeVisibility(category.Name))">
-                    @category.Name
-                </button>
-
-                <div class="collapse" style="margin-top:1em" id="@(category.Name+"-collapse")">
+                <CollapseComponent Title="@category.Name" ElementId="@(category.Name+"-collapse")">
                     <ul class="list-group">
                         @if (category.Products == null || category.Products.Count==0)
                         {
@@ -105,7 +102,7 @@ else
                             }
                         }
                     </ul>
-                    </div>
+                </CollapseComponent>
             </li>
         }
     </ul>
@@ -117,6 +114,8 @@ else
 
     private Category _category = new Category();
     private Product _product = new Product();
+
+    private int[] _selectedCategories = new int[] { };
 
     protected override async Task OnInitializedAsync()
     {
@@ -137,11 +136,6 @@ else
         StateHasChanged();
     }
 
-    protected async void ChangeVisibility(string elementId)
-    {
-        await JSRuntime.InvokeVoidAsync("ChangeVisibility", elementId+"-collapse");
-        StateHasChanged();
-    }
 
     protected async void AddCategory()
     {
@@ -153,8 +147,10 @@ else
 
     protected async void AddProduct()
     {
+        _product.Categories = _selectedCategories.Select(id => _categoriesList.Find(cat => cat.Id == id)).ToList()!;
+        _selectedCategories = new int[] { };
         await productService.AddProduct(_product);
-        await LoadCategoryList();
         _product = new Product();
+        await LoadCategoryList();
     }
 }

@@ -1,0 +1,40 @@
+﻿@inject IJSRuntime JSRuntime
+
+<div class="@DivClass">
+    <div class="@HeaderClass">
+        <button class="btn rounded col-12" 
+                style="text-align:left" 
+                @onclick="@(()=>ChangeVisibility())">
+                @Title
+        </button>
+    </div>
+    <div class="collapse" style="margin-top:1em" id="@ElementId">
+        @ChildContent
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public string Title { get; set; } = string.Empty;
+
+    [Parameter]
+    [EditorRequired]
+    public string ElementId { get; set; } = string.Empty;
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public string DivClass { get; set; } = string.Empty;
+
+    [Parameter]
+    public string HeaderClass { get; set; } = string.Empty;
+
+    protected async void ChangeVisibility()
+    {
+        await JSRuntime.InvokeVoidAsync("ChangeVisibility", ElementId);
+        StateHasChanged();
+    }
+
+}

@@ -19,12 +19,12 @@ namespace BlazorViewApp.Data.Services.ProductServices
             };
             _categories = new List<Category>()
             {
-                new Category(){ Id = 1, Name = "Фрукты", Discription = null},
-                new Category(){ Id = 2, Name = "Овощи", Discription = null},
-                new Category(){ Id = 3, Name = "Мясо", Discription = null},
-                new Category(){ Id = 4, Name = "Зелень", Discription = null},
-                new Category(){ Id = 5, Name = "Растительные продукты", Discription = null},
-                new Category(){ Id = 6, Name = "Животные продукты", Discription = null},
+                new Category(){ Id = 1, Name = "Фрукты", Description = null},
+                new Category(){ Id = 2, Name = "Овощи", Description = null},
+                new Category(){ Id = 3, Name = "Мясо", Description = null},
+                new Category(){ Id = 4, Name = "Зелень", Description = null},
+                new Category(){ Id = 5, Name = "Растительные продукты", Description = null},
+                new Category(){ Id = 6, Name = "Животные продукты", Description = null},
             };
             _records = new List<ProductToCategoriesRecord>()
             {
@@ -60,6 +60,22 @@ namespace BlazorViewApp.Data.Services.ProductServices
 		{
 			product.Id = _products.Max(p => p.Id) + 1;
 			_products.Add(product);
+
+			if (product.Categories != null)
+			{
+				foreach(Category category in product.Categories)
+				{
+					ProductToCategoriesRecord newRecord = new ProductToCategoriesRecord()
+					{
+						Id = _records.Max(x => x.Id) + 1,
+						ProductId = product.Id,
+						CategoryId = category.Id
+					};
+					_records.Add(newRecord);
+				}
+			}
+
+
 		}
 
 		public Task DeleteCategory(int id)

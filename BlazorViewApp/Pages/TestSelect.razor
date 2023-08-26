@@ -1,0 +1,29 @@
+﻿@page "/testpage"
+
+<p>
+    <label>
+        Select one or more colors:
+    </label>
+    <select @bind="colorsSelected" multiple>
+        <option value="white">White</option>
+        <option value="red">Red</option>
+        <option value="yellow">Yellow</option>
+        <option value="blue">Blue</option>
+        <option value="black">Black</option>
+    </select>
+</p>
+<p>
+    <ul>
+        @foreach (var item in colorsSelected)
+        {
+            <li>@item</li>
+        }
+    </ul>
+</p>
+
+
+
+@code {
+
+    string[] colorsSelected = new[] { "white", "black" };
+}

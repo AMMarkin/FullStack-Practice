@@ -16,9 +16,10 @@ namespace BlazorViewApp.Data.Models.Products
         [StringLength(30,MinimumLength =5,ErrorMessage ="Название должно быть от 5 до 30 символов")]
         public string? Name { get; set; }
 
-        [JsonPropertyName("name")]
+        [JsonPropertyName("description")]
         [StringLength(30,MinimumLength =5,ErrorMessage ="Описание должно быть от 5 до 50 символов")]
-        public string? Discription { get; set; }
+        public string? Description { get; set; }
+
 
         public List<Product>? Products { get; set; }
     }
